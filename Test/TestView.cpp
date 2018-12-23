@@ -12,6 +12,8 @@
 #include "TestDoc.h"
 #include "TestView.h"
 #include "math.h"
+#include "myText.h"
+#include "Rect.h"
 #define  PI 3.1415926
 #define  MIN(a,b)  ((a<b)?(a):(b))
 #define  MAX(a,b)  ((a>b)?(a):(b))
@@ -41,10 +43,10 @@ CTestView::CTestView()
 	// TODO: 在此处添加构造代码
 	Positionlight[0] = CP3(0,0,800);//设置光源位置坐标
 	Positionlight[1] = CP3(-200,800,800);//设置光源位置坐标
-	nLightCount =1;
+	nLightCount =2;
 	 
  	pLight=new CLighting(nLightCount);//一维光源动态数组
-//	pLight->Light[0].SetPosition(Positionlight[0].x,Positionlight[0].y,Positionlight[0].z);//设置光源位置坐标
+	pLight->Light[0].SetPosition(Positionlight[0].x,Positionlight[0].y,Positionlight[0].z);//设置光源位置坐标
 	pLight->Light[0].SetPosition(Positionlight[1].x,Positionlight[1].y,Positionlight[1].z);//设置光源位置坐标	
 	for(int i=0;i<nLightCount;i++)
 	{
@@ -193,12 +195,14 @@ void CTestView::DoubleBuffer(CDC* pDC)//双缓冲
 
 void CTestView::DrawObject(CDC* pDC)
 {
-	objects[0] = new CPlane(200,CP3(0.0,1.0,0.0),pMaterial[0],-400,400,-200,-200,-1600,0);//下面的墙
-	objects[1] = new CSphere(70,CP3(120,-110, -80),pMaterial[0]);//获取球的半径，位置，材质
-	objects[2] = new CSphere(100,CP3(-20,-70, -200),pMaterial[1]);//获取球的半径，位置，材质
-	objects[3] = new CSphere(50,CP3(-150,-150,-50),pMaterial[2]);//获取球的半径，位置，材质
-	objects[4] = new CSphere(90,CP3(150,-120, -500),pMaterial[3]);//获取球的半径，位置，材质
-	nObjectCount =5;
+	//objects[2] = new CPlane(200,CP3(0.0,1.0,0.0),pMaterial[0],-400,400,-200,-200,-800,0);//下面的墙
+	objects[0] = new myText(*pDC, L'3', (UINT)150,50, CVector(0,0,0), 0, CP3(0.0,0.707,0.707), pMaterial[0], 0, 300, 0, 300, 0, 300);
+	//objects[1] = new CSphere(70,CP3(120,-110, -80),pMaterial[0]);//获取球的半径，位置，材质
+	//objects[0] = new Rect(CP3(0.0, 1.0, 0.0), pMaterial[0], -200, 200,-150,-150, -600, 0);
+	//objects[3] = new CSphere(100,CP3(-20,-70, -200),pMaterial[1]);//获取球的半径，位置，材质
+	//objects[3] = new CSphere(50,CP3(-150,-150,-50),pMaterial[2]);//获取球的半径，位置，材质
+	//objects[1] = new CSphere(90,CP3(150,-120, -500),pMaterial[3]);//获取球的半径，位置，材质
+	nObjectCount =1;
 
 	for (int i = -Width/2; i< Width/2; i++)//遍历背景
 	{
@@ -220,7 +224,7 @@ void CTestView::DrawObject(CDC* pDC)
 }
 CRGB CTestView::Trace(CRay ray, int count) // 从视点 发出的 第一条 矢量  、 递归次数
 {
-	CRGB ret(0.0,0.0,0.0); //初始 颜色 、黑色
+	CRGB ret(0.0,0.8,0.6); //初始 颜色 、黑色
 	if(!count)//递归次数为count
 	{
 		return ret;
@@ -251,7 +255,7 @@ CRGB CTestView::Trace(CRay ray, int count) // 从视点 发出的 第一条 矢量  、 递归
 }
 CRGB CTestView::Shade(CRay ray, CInterPoint  hit, int count)//此条光线矢量  交点 递归次数
 {
-	CRGB ret(0.0,0.0,0.0);
+	CRGB ret(0.0,0.2,0.0);
 	CP3 point = hit.IntersectionPoint;  //光线与物体的交点
 	for (int i = 0; i < nLightCount; i++)
 	{
@@ -274,7 +278,7 @@ CRGB CTestView::Shade(CRay ray, CInterPoint  hit, int count)//此条光线矢量  交点
 			pow(pLight->Light[i].L_Position.z-point.z,2) );
 
 
-//		if (min_hit.t >= dist)
+		if (min_hit.t >= dist)
 		{
 			 ret += pLight->Lighting(ray.origin ,point, hit.Nformal,&hit.pMaterial, i);
 		}

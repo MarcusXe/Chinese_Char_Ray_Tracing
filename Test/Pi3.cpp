@@ -6,6 +6,7 @@
 CPi3::CPi3(void)
 {
 		z=0.0;
+		this->x = 10000;
 }
 
 

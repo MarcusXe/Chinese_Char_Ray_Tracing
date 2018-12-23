@@ -40,7 +40,6 @@ bool CPlane::GetInterPoint(CRay ray,CInterPoint &InPoint) //»ñÈ¡ Ö±Ïß Óë ÃæµÄ½»µ
 			InPoint1.Nformal = CVector(positionP);//½»µãµÄ·¨Ê¸Á¿
 			InPoint1.type = 1;
 		}
-
 		if(Round(InPoint1.IntersectionPoint.x)>=X_min&&Round(InPoint1.IntersectionPoint.x)<=X_max
 			&&Round(InPoint1.IntersectionPoint.y)>=Y_min&&Round(InPoint1.IntersectionPoint.y)<=Y_max
 			&&Round(InPoint1.IntersectionPoint.z)>=Z_min&&Round(InPoint1.IntersectionPoint.z)<=Z_max)

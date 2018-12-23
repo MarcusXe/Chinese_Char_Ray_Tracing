@@ -24,6 +24,7 @@ bool CSphere::GetInterPoint(CRay ray,CInterPoint &InPoint) //获取 直线 与 球的交
 		b = 2.0*(mid.x*ray.dir.x + mid.y*ray.dir.y + mid.z*ray.dir.z), 
 		c = mid.x*mid.x + mid.y*mid.y + mid.z*mid.z - r*r;
 
+
 	double flag = b*b-4*a*c;
 
 	if (flag >= 0)

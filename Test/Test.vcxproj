@@ -111,6 +111,7 @@
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Matrix44.h" />
+    <ClInclude Include="myText.h" />
     <ClInclude Include="P2.h" />
     <ClInclude Include="P3.h" />
     <ClInclude Include="Pi2.h" />
@@ -119,6 +120,7 @@
     <ClInclude Include="Primitive.h" />
     <ClInclude Include="Projection.h" />
     <ClInclude Include="Ray.h" />
+    <ClInclude Include="Rect.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="RGB.h" />
     <ClInclude Include="Sphere.h" />
@@ -141,6 +143,7 @@
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="Matrix44.cpp" />
+    <ClCompile Include="myText.cpp" />
     <ClCompile Include="P2.cpp" />
     <ClCompile Include="P3.cpp" />
     <ClCompile Include="Pi2.cpp" />
@@ -149,6 +152,7 @@
     <ClCompile Include="Primitive.cpp" />
     <ClCompile Include="Projection.cpp" />
     <ClCompile Include="Ray.cpp" />
+    <ClCompile Include="Rect.cpp" />
     <ClCompile Include="RGB.cpp" />
     <ClCompile Include="Sphere.cpp" />
     <ClCompile Include="stdafx.cpp">
