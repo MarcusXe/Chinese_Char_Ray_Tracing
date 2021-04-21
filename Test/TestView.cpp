@@ -41,8 +41,8 @@ END_MESSAGE_MAP()
 CTestView::CTestView()
 {
 	// TODO: 在此处添加构造代码
-	Positionlight[0] = CP3(0,0,800);//设置光源位置坐标
-	Positionlight[1] = CP3(-200,800,800);//设置光源位置坐标
+	Positionlight[0] = CP3(0,0,-200);//设置光源位置坐标
+	Positionlight[1] = CP3(-0,200,200);//设置光源位置坐标
 	nLightCount =2;
 	 
  	pLight=new CLighting(nLightCount);//一维光源动态数组
@@ -93,7 +93,7 @@ CTestView::CTestView()
 CTestView::~CTestView()
 {
 	delete pLight;
-	for(int i=0; i<5; i++)
+	for(int i=0; i<7; i++)
 	{
 		delete objects[i];
 	}
@@ -195,18 +195,22 @@ void CTestView::DoubleBuffer(CDC* pDC)//双缓冲
 
 void CTestView::DrawObject(CDC* pDC)
 {
-	//objects[2] = new CPlane(200,CP3(0.0,1.0,0.0),pMaterial[0],-400,400,-200,-200,-800,0);//下面的墙
-	objects[0] = new myText(*pDC, L'3', (UINT)150,50, CVector(0,0,0), 0, CP3(0.0,0.707,0.707), pMaterial[0], 0, 300, 0, 300, 0, 300);
-	//objects[1] = new CSphere(70,CP3(120,-110, -80),pMaterial[0]);//获取球的半径，位置，材质
-	//objects[0] = new Rect(CP3(0.0, 1.0, 0.0), pMaterial[0], -200, 200,-150,-150, -600, 0);
-	//objects[3] = new CSphere(100,CP3(-20,-70, -200),pMaterial[1]);//获取球的半径，位置，材质
-	//objects[3] = new CSphere(50,CP3(-150,-150,-50),pMaterial[2]);//获取球的半径，位置，材质
+	objects[5] = new myText(*pDC, L'课', (UINT)150, 10, CVector(0, 0, 0), 200, CP3(0.0,1.0,0.0), pMaterial[0],0, 400, -200, -200,5, 600);
+	objects[1] = new myText(*pDC, L'设', (UINT)150, 10, CVector(0, 0, 0), 200, CP3(0.0, 1.0, 0.0), pMaterial[0], 0, 400, -200, -200, 150, 600);
+	objects[0] = new CPlane(300,CP3(0.0,1.0,0.0),pMaterial[0],-400,400,-300,-300,-1000,200);//下面的墙
+	//objects[0] = new myText(*pDC, L'3', (UINT)150,50, CVector(0,0,0), 0, CP3(0.0,0.707,0.707), pMaterial[0], 0, 300, 0, 300, 0, 300);
+	objects[2] = new CSphere(70,CP3(20,-110, 80),pMaterial[0]);//获取球的半径，位置，材质
+	//objects[3] = new Rect(pMaterial[0], -100, 50, 200, -250, -50, 50);
+	objects[3] = new myText(*pDC, L'X', (UINT)150, 50, CVector(0, 0, 0), 200, CP3(0.0, 1.0, 0.0), pMaterial[0], 150, 400, -200, -200, 5, 600);
+	//objects[6] = new myText(*pDC, L'3', (UINT)150, 10, CVector(0, 0, 0), 200, CP3(0.0, 1.0, 0.0), pMaterial[0], 10, 400, -200, -200, 150, 600);
+	objects[4] = new CSphere(100,CP3(-20,-70, 00),pMaterial[1]);//获取球的半径，位置，材质
+	//objects[5] = new CSphere(50,CP3(-150,-150,-50),pMaterial[2]);//获取球的半径，位置，材质
 	//objects[1] = new CSphere(90,CP3(150,-120, -500),pMaterial[3]);//获取球的半径，位置，材质
-	nObjectCount =1;
+	nObjectCount =6;
 
-	for (int i = -Width/2; i< Width/2; i++)//遍历背景
+	for (int i = -150; i< Width/2+200; i++)//遍历背景
 	{
-		for (int j = -Height/2; j< Height/2; j++)
+		for (int j = -Height/2-200; j< Height/2+200; j++)
 		{
 			is_pppp = true;
 			CVector EyeToScreenP(projection.ViewPoint,CP3(i,j,-200)); //从屏幕到 某一视点  像素中心得 矢量	
@@ -214,11 +218,11 @@ void CTestView::DrawObject(CDC* pDC)
 			ray.alpha = -1;
 			ray.Normalized();  //单位化该矢量
 
-			CRGB color = Trace(ray,5);   //发出这条矢量		
+			CRGB color = Trace(ray,4);   //发出这条矢量		
 
 			CP2 p = projection.PerspectiveProjection(ppppp);//透视投影
 			color.Normalize();
-			pDC->SetPixelV(Round(p.x),Round(p.y),RGB(color.red,color.green,color.blue));
+			pDC->SetPixelV(Round(p.x-200),Round(p.y+300),RGB(color.red,color.green,color.blue));
 		}
 	}
 }

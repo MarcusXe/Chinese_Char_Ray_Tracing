@@ -55,7 +55,7 @@ protected:
 	int Width;
 	int Height;
 	CP3 ViewPoint;
-	CPrimitive *objects[5];
+	CPrimitive *objects[7];
 	int nObjectCount;
 	CP3 Positionlight[2];
 	int nLightCount;

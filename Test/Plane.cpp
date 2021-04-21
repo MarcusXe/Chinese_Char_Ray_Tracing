@@ -57,10 +57,10 @@ bool CPlane::GetInterPoint(CRay ray,CInterPoint &InPoint) //»ñÈ¡ Ö±Ïß Óë ÃæµÄ½»µ
 					
 				if(0==(Round((InPoint1.IntersectionPoint.x+400)/80)+Round((InPoint1.IntersectionPoint.z+1600)/80))%2)
 				{
-					InPoint.pMaterial.SetAmbient(CRGB(0.0,0.0,0.0));//²ÄÖÊ¶Ô»·¾³¹âµÄ·´ÉäÂÊ
-					InPoint.pMaterial.SetDiffuse(CRGB(0.0,0.0,0.0));//²ÄÖÊ¶Ô»·¾³¹âºÍÂş·´Éä¹âµÄ·´ÉäÂÊÏàµÈ
-					InPoint.pMaterial.SetSpecular(CRGB(0.0,0.0,0.0));//²ÄÖÊ¶Ô¾µÃæ·´Éä¹âµÄ·´ÉäÂÊ
-					InPoint.pMaterial.SetEmit(CRGB(0.0,0.0,0.0));//²ÄÖÊ×ÔÉí·¢É¢µÄÑÕÉ«
+					InPoint.pMaterial.SetAmbient(CRGB(100,0.0,0.0));//²ÄÖÊ¶Ô»·¾³¹âµÄ·´ÉäÂÊ
+					InPoint.pMaterial.SetDiffuse(CRGB(100,0.0,0.0));//²ÄÖÊ¶Ô»·¾³¹âºÍÂş·´Éä¹âµÄ·´ÉäÂÊÏàµÈ
+					InPoint.pMaterial.SetSpecular(CRGB(100,0.0,0.0));//²ÄÖÊ¶Ô¾µÃæ·´Éä¹âµÄ·´ÉäÂÊ
+					InPoint.pMaterial.SetEmit(CRGB(100,0.0,0.0));//²ÄÖÊ×ÔÉí·¢É¢µÄÑÕÉ«
 
 				}
 				InPoint.pMaterial.M_n=50.0;//¸ß¹âÖ¸Êı

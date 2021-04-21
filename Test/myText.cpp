@@ -2,52 +2,111 @@
 #include "myText.h"
 #include "test.h"
 #include "math.h"
+
 #define Round(d) int(floor(d+0.5))
+
 
 bool myText::GetInterPoint(CRay ray, CInterPoint &InPoint) //获取 直线 与 面的交点
 {
-	CInterPoint InPoint1;
-	//bool sign = false;
-	//曲面法矢量与光线的交点
+	//临时变量,用于分别记录是先和字面碰撞还是先和某个侧面碰撞
+	CInterPoint pp[4];
+	//相当于一个哨兵
+	pp[3].t=pp[2].t=pp[1].t = pp[0].t = 50001;
+	//法矢量与光线的交点
 	double mid = DotProduct(positionP, ray.dir);
 	if (mid != 0 || 1)
 	{
-		//t=-(N*O+d)/(N*V)
+		//计算的是光源和字面的垂直距离
 		double ans = -(DotProduct(positionP, ray.origin) + r) / mid;
-
 		if (ans > 0.00001)
 		{
-			InPoint1.t = ans;
-			InPoint1.IntersectionPoint = ray.GetPoint(InPoint1.t);  //交点坐标
-			InPoint1.Nformal = CVector(positionP);//交点的法矢量
-			InPoint1.type = 1;
+			pp[2].t = ans;
+			pp[2].IntersectionPoint = ray.GetPoint(pp[2].t);  //交点坐标
+			pp[2].Nformal = CVector(positionP);//交点的法矢量
+			pp[2].type = 1;
 		}
+		//由三维坐标转换到字平面的二维坐标的变换
 		point p;
-		float tx = InPoint1.IntersectionPoint.x - X_min;
-		float ty = InPoint1.IntersectionPoint.y - Y_min;
-		float tz = InPoint1.IntersectionPoint.z - Z_min;
-		p.x = tx+ DotProduct(positionP, CVector(1.0,0.0,0.0))*ty/2;
-		p.y = tz +DotProduct(positionP, CVector(0.0, 0.0, 1.0))*ty/2;
-		if (Round(p.x) <= Zi_X_max - Zi_X_min && Round(p.y) <= Zi_Y_max - Zi_Y_min)
-			if (pointInZi(p, Czi))
+		double tx = pp[2].IntersectionPoint.x - X_min;
+		double ty = pp[2].IntersectionPoint.y - Y_min;
+		double tz = pp[2].IntersectionPoint.z - Z_min;
+		p.x = tx + DotProduct(positionP, CVector(1.0, 0.0, 0.0))*ty / 2;
+		p.y = tz + DotProduct(positionP, CVector(0.0, 0.0, 1.0))*ty / 2;
+		if (Round(p.x) <= Zi_X_max - Zi_X_min && Round(p.y) <= Zi_Y_max - Zi_Y_min)//为了提高效率
+			if (pointInZi(p, Czi))//如果碰撞点在字内
 			{
-				InPoint = InPoint1;
-				InPoint.pMaterial = this->pMaterial;
-				{
-					InPoint.pMaterial.SetAmbient(CRGB(255.0, 255.0, 0.0));//材质对环境光的反射率
-					InPoint.pMaterial.SetDiffuse(CRGB(125.0, 255.0, 0.0));//材质对环境光和漫反射光的反射率相等
-					InPoint.pMaterial.SetSpecular(CRGB(125.0, 255.0, 0.0));//材质对镜面反射光的反射率
-					InPoint.pMaterial.SetEmit(CRGB(125.0, 255.0, 0.0));//材质自身发散的颜色
-					InPoint.pMaterial.M_n = 50.0;//高光指数
-					InPoint.pMaterial.sigma = 0;
-
-				}
-				return true;
+				
+					pp[2].pMaterial = this->pMaterial;
+					pp[2].pMaterial.SetAmbient(CRGB(255.0, 255.0, 0.0));//材质对环境光的反射率
+					pp[2].pMaterial.SetDiffuse(CRGB(125.0, 255.0, 0.0));//材质对环境光和漫反射光的反射率相等
+					pp[2].pMaterial.SetSpecular(CRGB(125.0, 255.0, 0.0));//材质对镜面反射光的反射率
+					pp[2].pMaterial.SetEmit(CRGB(125.0, 255.0, 0.0));//材质自身发散的颜色
+					pp[2].pMaterial.M_n = 50.0;//高光指数
+					pp[2].pMaterial.sigma = 0;
+					pp[0] = pp[2];
 			}
-
+		
+		if (Round(p.x) <= Zi_X_max - Zi_X_min+w*2 && Round(p.y) <= Zi_Y_max - Zi_Y_min+w*2)//也是为了提高效率
+			//循环遍历每一条边,并记录与此条光线光源最近的
+			for (int i = 0; i <mycount; i++) {
+				if (rect[i]->GetInterPoint(ray, pp[3])) {
+						pp[1] = pp[1].t < pp[3].t ? pp[1] : pp[3];
+				}
+			}
+		//if (pp[1].t < 5000)
+		//	printf("1212");
+		//判断是先于面碰还是先与边碰
+		if (pp[0].t < 50000 || pp[1].t < 50000) {
+			InPoint = pp[0].t > pp[1].t ? pp[1] : pp[0];
+			return true;
+		}
 	}
 	return false;
 }
+//{
+//	CInterPoint pp[2];
+//	//bool sign = false;
+//	//曲面法矢量与光线的交点
+//	double mid = DotProduct(positionP, ray.dir);
+//	if (mid != 0 || 1)
+//	{
+//		//t=-(N*O+d)/(N*V)
+//		double ans = -(DotProduct(positionP, ray.origin) + r) / mid;
+//
+//		if (ans > 0.00001)
+//		{
+//			pp[0].t = ans;
+//			pp[0].IntersectionPoint = ray.GetPoint(pp[0].t);  //交点坐标
+//			pp[0].Nformal = CVector(positionP);//交点的法矢量
+//			pp[0].type = 1;
+//		}
+//		point p;
+//		float tx = pp[0].IntersectionPoint.x - X_min;
+//		float ty = pp[0].IntersectionPoint.y - Y_min;
+//		float tz = pp[0].IntersectionPoint.z - Z_min;
+//		p.x = tx +DotProduct(positionP, CVector(1.0, 0.0, 0.0))*ty / 2;
+//		p.y = tz +DotProduct(positionP, CVector(0.0, 0.0, 1.0))*ty / 2;
+//		if (Round(p.x) <= Zi_X_max - Zi_X_min && Round(p.y) <= Zi_Y_max - Zi_Y_min)
+//			if (pointInZi(p, Czi))
+//			{
+//				pp[0].pMaterial = this->pMaterial;
+//				{
+//					pp[0].pMaterial.SetAmbient(CRGB(255.0, 255.0, 0.0));//材质对环境光的反射率
+//					pp[0].pMaterial.SetDiffuse(CRGB(125.0, 255.0, 0.0));//材质对环境光和漫反射光的反射率相等
+//					pp[0].pMaterial.SetSpecular(CRGB(125.0, 255.0, 0.0));//材质对镜面反射光的反射率
+//					pp[0].pMaterial.SetEmit(CRGB(125.0, 255.0, 0.0));//材质自身发散的颜色
+//					pp[0].pMaterial.M_n = 50.0;//高光指数
+//					pp[0].pMaterial.sigma = 0;
+//
+//				}
+//				return true;
+//			}
+//	}
+//	else {
+//
+//	}
+//	return false;
+//}
 
 //
 //bool CalPlaneLineIntersectPoint(CVector planeVector, CPi3 planePoint, CVector lineVector, CPi3 linePoint, CPi3 p1, CPi3 p2,CPi3 &Result)
@@ -95,8 +154,6 @@ myText::myText(CDC &Dc, wchar_t CZi, UINT Size, int W, CVector Dit, double r, CP
 	this->size = Size;
 	this->w = W;
 	initZi();
-	//	int MaxY = 0;
-
 }
 //bool myText::GetInterPoint(CRay ray, CInterPoint &InPoint) {
 //	CInterPoint InPoint1;
@@ -146,8 +203,8 @@ bool myText::pointInPoly(point p, poly Cpoly) {
 		py = p.y,
 		flag = false;
 
-	for (int i = 1, j = i - 1, l = Cpoly.len; i <= l; i++, j = i - 1) {
-		int sx = Cpoly.p[j].x -Zi_X_min,
+	for (int i = 1, j = i - 1, l = Cpoly.len; i <= l+1; i++, j = i - 1) {
+		int sx = Cpoly.p[j].x - Zi_X_min,
 			sy = Cpoly.p[j].y - Zi_Y_min,
 			tx = Cpoly.p[i].x - Zi_X_min,
 			ty = Cpoly.p[i].y - Zi_Y_min;
@@ -181,14 +238,14 @@ bool myText::pointInPoly(point p, poly Cpoly) {
 /*判断点在字内*/
 bool myText::pointInZi(point p, zi Czi) {
 	bool flag = false;
-	for (int i = 0; i <Czi.count; i++)
+	for (int i = 0; i < Czi.count; i++)
 		if (pointInPoly(p, Czi.ploy[i]))
 			flag = !flag;
 	return flag;
 }
 /*判断点在字边内*/
 bool myText::pointInZiBian(point p, zi Czi) {
-	for (int i = 0; i < Czi.count; i++)
+	for (int i = 0; i < Czi.count-1; i++)
 		if (pointInPolyBian(p, Czi.ploy[i]))
 			return true;
 	return false;
@@ -359,7 +416,7 @@ void myText::initZi()
 			//根据TTF字体结构获取字符轮廓
 			//::MoveToEx(hDC, iXpos + xOld, iYpos - yOld, NULL);
 			ploypoint[0].x = xOld;
-			ploypoint[0].y =-yOld;
+			ploypoint[0].y = -yOld;
 			TTPOLYCURVE *pCurrentCurve = (TTPOLYCURVE*)(pHeader + 1);
 			int remainByte = pHeader->cb - sizeof(TTPOLYGONHEADER);
 			int currentSize = 0;
@@ -400,9 +457,9 @@ void myText::initZi()
 
 				remainByte -= count;
 			}
-			//ploypoint[currentSize+1] = ploypoint[0];
-			Cpoly.p = (point *)malloc(sizeof(point)*(currentSize + 1));
-			memcpy(Cpoly.p, ploypoint, sizeof(point)*(currentSize + 1));
+			ploypoint[currentSize+1] = ploypoint[0];
+			Cpoly.p = (point *)malloc(sizeof(point)*(currentSize + 2));
+			memcpy(Cpoly.p, ploypoint, sizeof(point)*(currentSize + 2));
 			Cpoly.len = currentSize;
 			Czi.ploy[Czi.count] = Cpoly;
 			Czi.count++;
@@ -422,6 +479,13 @@ void myText::initZi()
 			dwDataSize -= pHeader->cb;
 			pHeader = (TTPOLYGONHEADER*)((char*)pHeader + pHeader->cb);
 		}
+		for (int i = 0,k=0; i < Czi.count; i++) {
+			for (int j = 0; j < Czi.ploy[i].len+1; j++) {
+				rect[k++] = new Rect(pMaterial, Czi.ploy[i].p[j].x - Zi_X_min+X_min, Czi.ploy[i].p[j].y - Zi_Y_min+Z_min, Czi.ploy[i].p[j + 1].x - Zi_X_min+X_min, Czi.ploy[i].p[j + 1].y - Zi_Y_min+Z_min,Y_min-w,Y_min);
+				mycount++; 
+			}
+		}
+
 
 		//for (int i = 0; i < 500; i++)
 		//	for (int j = 0; j < 500; j++)

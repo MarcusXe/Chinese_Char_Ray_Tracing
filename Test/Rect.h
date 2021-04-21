@@ -14,7 +14,7 @@ class Rect :
 public:
 	Rect(void);
 	~Rect(void);
-	Rect(CP3 positionP, CMaterial pMaterial, double, double, double, double, double, double);
+	Rect(CMaterial pMaterial, double, double, double, double, double, double);
 	bool GetInterPoint(CRay Ray, CInterPoint &InPoint); //获取 直线 与 面片的交点
 public:
 	double X_min, X_max;

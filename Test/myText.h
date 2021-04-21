@@ -1,3 +1,4 @@
+#include "Rect.h"
 #pragma once
 #define Round(d) int(floor(d+0.5))
 #define CREATE_FONT(nHeight, sName) CreateFont(\
@@ -28,8 +29,8 @@ typedef struct XET
 /******定义点结构体point******************************************************/
 typedef struct Point
 {
-	float x;
-	float y;
+	double x;
+	double y;
 }point;
 //闭合多边形
 typedef struct Poly
@@ -59,12 +60,14 @@ public:
 	//宽度
 	int w;
 	//方向
+	Rect* rect[80];
 	CVector dit;
 	double X_min, X_max;
 	double Y_min, Y_max;
 	double Z_min, Z_max;
 	double Zi_X_min=50000, Zi_X_max=-5000;
 	double Zi_Y_min=50000, Zi_Y_max=-5000;
+	int mycount=0;
 
 public:
 	//myText(CDC &dc,wchar_t CZi, int Size, int w, CP3 Position, CVector dit, CMaterial pMaterial);
